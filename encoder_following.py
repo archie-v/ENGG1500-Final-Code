@@ -9,7 +9,7 @@ motor_right.set_forwards()
 
 # speed settings
 BASE_SPEED = 22
-MAX_SPEED = 34
+MAX_SPEED = 47
 MIN_SPEED = 0
 K = 65
 
@@ -20,7 +20,7 @@ R_OFF = 2352
 
 # thresholds
 LINE_THRESHOLD = 140
-SEARCH_TIMEOUT_MS = 500
+SEARCH_TIMEOUT_MS = 1500
 
 # state
 state = "LINE_FOLLOW"
@@ -28,25 +28,34 @@ last_seen = 0
 last_line_time = ticks_ms()
 
 def set_motors(left_pwm, right_pwm):
-    left_pwm = max(MIN_SPEED, min(MAX_SPEED, int(left_pwm)))
-    right_pwm = max(MIN_SPEED, min(MAX_SPEED, int(right_pwm)))
+    left_pwm = max(-MAX_SPEED, min(MAX_SPEED, int(left_pwm)))
+    right_pwm = max(-MAX_SPEED, min(MAX_SPEED, int(right_pwm)))
 
-    motor_left.set_forwards()
-    motor_right.set_forwards()
-    motor_left.duty(left_pwm)
-    motor_right.duty(right_pwm)
+    if left_pwm < 0:
+        motor_left.set_backwards()
+        motor_left.duty(-left_pwm-40)
+    else:
+        motor_left.set_forwards()
+        motor_left.duty(left_pwm+10)
+
+    if right_pwm < 0:
+        motor_right.set_backwards()
+        motor_right.duty(-right_pwm-10)
+    else:
+        motor_right.set_forwards()
+        motor_right.duty(right_pwm+10)
 
 def set_left_search():
     motor_left.set_backwards()
     motor_right.set_forwards()
-    motor_left.duty(30)
-    motor_right.duty(30)
+    motor_left.duty(40)
+    motor_right.duty(40)
 
 def set_right_search():
     motor_left.set_forwards()
     motor_right.set_backwards()
-    motor_left.duty(30)
-    motor_right.duty(30)
+    motor_left.duty(40)
+    motor_right.duty(40)
 
 def stop():
     motor_left.duty(0)
@@ -89,12 +98,10 @@ while True:
 
         set_motors(left_pwm, right_pwm)
 
-        if L_sig > R_sig + 150:
+        if L_sig > R_sig + 175:
             last_seen = -1
-        elif R_sig > L_sig + 150:
+        elif R_sig > L_sig + 175:
             last_seen = 1
-        else:
-            last_seen = 0
 
     elif state == "LINE_SEARCH":
         if last_seen == -1:
