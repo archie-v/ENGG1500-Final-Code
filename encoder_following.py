@@ -9,7 +9,7 @@ motor_right.set_forwards()
 
 # speed settings
 BASE_SPEED = 22
-MAX_SPEED = 47
+MAX_SPEED = 40
 MIN_SPEED = 0
 K = 65
 
@@ -33,7 +33,7 @@ def set_motors(left_pwm, right_pwm):
 
     if left_pwm < 0:
         motor_left.set_backwards()
-        motor_left.duty(-left_pwm-40)
+        motor_left.duty(-left_pwm-30)
     else:
         motor_left.set_forwards()
         motor_left.duty(left_pwm+10)
@@ -48,18 +48,20 @@ def set_motors(left_pwm, right_pwm):
 def set_left_search():
     motor_left.set_backwards()
     motor_right.set_forwards()
-    motor_left.duty(40)
-    motor_right.duty(40)
+    motor_left.duty(30)
+    motor_right.duty(30)
 
 def set_right_search():
     motor_left.set_forwards()
     motor_right.set_backwards()
-    motor_left.duty(40)
-    motor_right.duty(40)
+    motor_left.duty(30)
+    motor_right.duty(30)
 
 def stop():
     motor_left.duty(0)
     motor_right.duty(0)
+    motor_left.set_forwards()
+    motor_right.set_forwards()
 
 while True:
     now = ticks_ms()
